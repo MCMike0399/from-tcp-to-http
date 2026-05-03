@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}",
+      "vmArgs": "--enable-preview"
+    },
+    {
+      "type": "java",
+      "name": "TcpEchoServer",
+      "request": "launch",
+      "mainClass": "tcp.TcpEchoServer",
+      "vmArgs": "--enable-preview"
+    },
+    {
+      "type": "java",
+      "name": "HttpServer",
+      "request": "launch",
+      "mainClass": "server.HttpServer",
+      "vmArgs": "--enable-preview"
+    }
+  ]
+}
