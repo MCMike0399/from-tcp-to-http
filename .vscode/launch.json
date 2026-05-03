@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "LineReaderTestMain",
+      "request": "launch",
+      "mainClass": "streams.LineReaderTestMain",
+      "projectName": "from-tcp-to-http"
+    },
+    {
+      "type": "java",
       "name": "Current File",
       "request": "launch",
       "mainClass": "${file}",
