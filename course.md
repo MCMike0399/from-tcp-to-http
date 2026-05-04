@@ -34,12 +34,17 @@
 | **HTTP: The Definitive Guide** (2002) | David Gourley & Brian Totty | 600+ page deep dive into HTTP message format, methods, status codes, caching, proxies, HTTPS. Old but exhaustive. |
 | **High Performance Browser Networking** (free at [hpbn.co](https://hpbn.co/)) | Ilya Grigorik (Google) | Covers TCP, TLS, HTTP/1.1, HTTP/2, WebSocket with a performance focus. Essential for understanding real-world protocol behavior. |
 | **Java Network Programming**, 4th Ed. (2013) | Elliotte Rusty Harold | Java sockets, server sockets, UDP, NIO with complete working examples. The most comprehensive Java-specific networking book. |
+| **TCP/IP Sockets in Java**, 2nd Ed. (2008) | Kenneth Calvert & Michael Donahoo | The most directly relevant book: Java socket programming with line-by-line commentary, NIO channels, and mapping from Java to underlying protocol mechanics. [Companion site](https://cs.baylor.edu/~donahoo/practical/JavaSockets/). |
 | **Java Concurrency in Practice** (2006) | Brian Goetz et al. | The definitive guide to writing correct concurrent Java. Critical for building a multi-threaded HTTP server. |
 | **Effective Java**, 3rd Ed. (2018) | Joshua Bloch | 90 best-practice items for writing robust Java code. Not networking-specific but essential for production-quality Java. |
 | **UNIX Network Programming, Vol. 1**, 3rd Ed. (2003) | W. Richard Stevens et al. | The authoritative sockets API guide. Even Java developers benefit because Java's socket model mirrors BSD sockets 1:1. |
+| **Practical Packet Analysis**, 3rd Ed. (2017) | Chris Sanders (No Starch Press) | Hands-on Wireshark-based book. Capture your own server's traffic and analyze TCP handshakes, HTTP framing, retransmissions on the wire. |
 | **Beej's Guide to Network Programming** (free at [beej.us/guide/bgnet](https://beej.us/guide/bgnet/)) | Brian "Beej" Hall | The most beloved introductory guide to C socket programming. Understanding the underlying C APIs illuminates Java's abstractions. |
 | **Wizard Zines: Bite Size Networking!** + **HTTP: Learn Your Browser's Language!** | Julia Evans | Visual one-page explanations of networking concepts. Exceptionally clear for working engineers. [wizardzines.com](https://wizardzines.com/) |
-| **http2 explained** (free at [daniel.haxx.se/http2](https://daniel.haxx.se/http2/)) | Daniel Stenberg (curl author) | Concise practical guide to HTTP/2 binary framing, multiplexing, HPACK. Also see his "http3 explained." |
+| **Networking! ACK! (zine)** (free [PDF](https://jvns.ca/networking-zine.pdf)) | Julia Evans | 24-page illustrated zine covering packets to TCP handshakes to HTTP. Surprisingly dense. Builds intuition about what happens at each layer. |
+| **http2 explained** (free at [daniel.haxx.se/http2](https://daniel.haxx.se/http2/)) | Daniel Stenberg (curl author) | Concise practical guide to HTTP/2 binary framing, multiplexing, HPACK. |
+| **HTTP/3 Explained** (free at [http3-explained.haxx.se](https://http3-explained.haxx.se/en)) | Daniel Stenberg | Covers QUIC, UDP-based transport, and why TCP's head-of-line blocking motivated a complete transport rethink. |
+| **Netty in Action** (2015) | Norman Maurer & Marvin Wolfthal | After building from scratch, study how Netty solves the same problems (event loops, channel pipelines, buffer management). The "why frameworks exist" book. |
 
 ### Foundational Papers (read these to understand *why*, not just *how*)
 
@@ -50,16 +55,15 @@
 | **"End-to-End Arguments in System Design"** | J.H. Saltzer, D.P. Reed & D.D. Clark | 1984 | The most influential network design principle: implement functions at endpoints, not in the network. Explains why TCP does retransmission at endpoints. [PDF](https://web.mit.edu/saltzer/www/publications/endtoend/endtoend.pdf) |
 | **"Architectural Styles and the Design of Network-Based Software Architectures"** (PhD Dissertation) | Roy T. Fielding | 2000 | Defines REST. Fielding co-authored HTTP/1.1 -- this dissertation explains the design rationale behind HTTP's methods, status codes, and statelessness. [HTML](https://ics.uci.edu/~fielding/pubs/dissertation/top.htm) |
 | **"Information Management: A Proposal"** | Tim Berners-Lee | 1989 | The original proposal for the World Wide Web that led to HTTP, HTML, and URLs. The document that started it all. [HTML](https://www.w3.org/History/1989/proposal.html) |
-| **"Congestion Avoidance and Control"** | Van Jacobson | 1988 | Introduced slow start, congestion avoidance, fast retransmit, and fast recovery -- the algorithms that make TCP work on congested networks. |
+| **"Congestion Avoidance and Control"** | Van Jacobson | 1988 | Introduced slow start, congestion avoidance, fast retransmit, and fast recovery -- the algorithms that make TCP work on congested networks. [PDF](https://ee.lbl.gov/papers/congavoid.pdf) |
+| **"On Holy Wars and a Plea for Peace"** | Danny Cohen | 1980 | The paper that coined "big-endian" and "little-endian" (from Gulliver's Travels). A short, funny, essential read on byte order and why network byte order exists. [PDF](https://www.ietf.org/rfc/ien/ien137.txt) |
+| **"Development of the Domain Name System"** | Paul Mockapetris & Kevin Dunlap | 1988 | How DNS was designed and why. Understanding DNS is prerequisite to understanding how HTTP clients resolve hostnames before opening TCP connections. |
 
-### Video Courses & Lectures
+### Course Inspiration
 
 | Resource | What It Covers |
 |---|---|
-| **Stanford CS144: Introduction to Computer Networking** ([cs144.github.io](https://cs144.github.io/)) | Students build a working TCP implementation. Lab assignments are directly relevant to this project. |
-| **Kurose/Ross Companion Videos** ([gaia.cs.umass.edu](https://gaia.cs.umass.edu/kurose_ross/lectures.php)) | Short video segments by the textbook authors. Perfect supplement if using their book. |
-| **Computerphile** ([youtube.com/computerphile](https://www.youtube.com/computerphile)) | Accessible 5-15 minute videos on TCP handshake, DNS, TLS, HTTP/2 by university researchers. |
-| **ThePrimeagen: From TCP to HTTP** ([YouTube](https://www.youtube.com/watch?v=FknTw9bJsXM)) | The inspiration for this course. 4h38m full course building an HTTP server from TCP sockets in Go. |
+| **ThePrimeagen: From TCP to HTTP** ([Boot.dev](https://www.boot.dev/courses/learn-http-protocol-golang)) | The inspiration for this course. Building an HTTP server from TCP sockets in Go. We translate concepts to Java idioms. |
 
 ### RFC Reference Table
 
@@ -76,6 +80,93 @@
 | **RFC 6265** | HTTP Cookies | Set-Cookie/Cookie headers for stateful HTTP |
 | **RFC 7617** | HTTP Basic Authentication | Base64 user:password encoding |
 | **RFC 2818** | HTTP Over TLS | How HTTPS works |
+| **RFC 896** | Nagle's Algorithm | The original congestion control for small packets; why TCP_NODELAY exists |
+
+### How to Read RFCs
+
+Before implementing RFC 9112, learn to read RFCs effectively:
+
+| Resource | Author | Why It Matters |
+|---|---|---|
+| **[How to Read an RFC](https://www.mnot.net/blog/2018/07/31/read_rfc)** | Mark Nottingham (former IETF HTTP WG chair) | Written by the person who shepherded RFCs 9110-9112. Covers MUST/SHOULD/MAY keywords, requirement targets, and how to navigate the IETF ecosystem. The definitive guide. |
+| **[IETF Blog: How to Read an RFC](https://www.ietf.org/blog/how-read-rfc/)** | IETF | Official guide to RFC categories (Standards Track, Informational, BCP) and the standards process. |
+| **[The Networking RFCs: To read or not to read?](https://packetpushers.net/blog/the-networking-rfcs-to-read-or-not-to-read/)** | Packet Pushers | Pragmatic take on which RFCs are worth reading directly vs. absorbed through secondary sources. |
+
+### Articles & Blog Posts
+
+#### TCP Internals
+
+| Article | Author | Why It Matters |
+|---|---|---|
+| **[Let's Code a TCP/IP Stack](https://www.saminiir.com/lets-code-tcp-ip-stack-1-ethernet-arp/)** (5-part series) | Sami Niiranen | Builds a userspace TCP/IP stack in C from Ethernet frames up through TCP retransmission. The best "implement TCP yourself" blog series. Source: [github.com/saminiir/level-ip](https://github.com/saminiir/level-ip). |
+| **[Why You Should Understand (a Little) About TCP](https://jvns.ca/blog/2015/11/21/why-you-should-understand-a-little-about-tcp/)** | Julia Evans | The delayed ACK + Nagle interaction that causes 40ms latency in HTTP request/response patterns. Your server will exhibit this exact bug without TCP_NODELAY. |
+| **[Why Do We Use the Linux Kernel's TCP Stack?](https://jvns.ca/blog/2016/06/30/why-do-we-use-the-linux-kernels-tcp-stack/)** | Julia Evans | What the kernel TCP stack actually does (retransmission, congestion control, flow control) and why userspace stacks exist. |
+| **[It's Always TCP_NODELAY](https://brooker.co.za/blog/2024/05/09/nagle.html)** | Marc Brooker (AWS) | TCP_NODELAY should always be enabled for request/response protocols. The 1984 problem is irrelevant today. |
+| **[TCP Congestion Control Deep Dive](https://pingdo.net/performance/tcp-congestion-control-deep-dive/)** | Pingdo | Window scaling, CUBIC, and BBR algorithms beyond the textbook slow-start explanation. |
+| **[The Internet is Cool. Thank you, TCP](https://cefboud.com/posts/tcp-deep-dive-internals/)** | Moncef Abboud | Modern, well-illustrated deep dive into TCP internals from a practitioner's perspective. |
+| **[Optimizing TCP for High WAN Throughput](https://blog.cloudflare.com/optimizing-tcp-for-high-throughput-and-low-latency/)** | Cloudflare Engineering | TCP receive windows, `tcp_rmem`, bandwidth-delay product. Read after your server works, when you want to understand why large transfers are slow over high-latency links. |
+| **[How to Read from a TCP Socket](https://incoherency.co.uk/blog/stories/reading-tcp-sockets.html)** | James Stanley | Why `read()` doesn't return what you expect. The article that destroys the "one write = one read" myth. |
+
+#### HTTP Protocol
+
+| Article | Author | Why It Matters |
+|---|---|---|
+| **[HTTP/1.0 From Scratch](https://kmcd.dev/posts/http1.0-from-scratch/)** | Kevin McDonald | Concise walkthrough of building a minimal HTTP/1.0 server. Good warm-up before HTTP/1.1 complexity. |
+| **[HTTP Made Really Easy](https://www.jmarshall.com/easy/http/)** | James Marshall | A classic 15-page practical guide to HTTP/1.0 and 1.1. Focused on the wire format for implementers. |
+| **[HTTP/1.1 Explained](https://http.dev/1.1)** | http.dev | Comprehensive guide more accessible than the RFC itself. Good companion reader alongside RFC 9112. |
+| **[HTTP Keep-Alive, Pipelining, Multiplexing & Connection Pooling](https://www.haproxy.com/blog/http-keep-alive-pipelining-multiplexing-and-connection-pooling)** | HAProxy team | Production-grade explanation by people who handle millions of connections daily. |
+| **[Connection Management in HTTP/1.x](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x)** | Mozilla (MDN) | Authoritative reference on persistent connections and pipelining with clean diagrams. |
+| **[HTTP Desync Attacks: Request Smuggling Reborn](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn)** | James Kettle (PortSwigger) | Catalogs every edge case where HTTP parsers disagree. Content-Length vs Transfer-Encoding conflicts, chunked extension parsing, line terminator variations. The adversarial spec your parser must survive. |
+| **[The Road to QUIC](https://blog.cloudflare.com/the-road-to-quic/)** | Cloudflare Engineering | Why QUIC replaces TCP for HTTP: handshake costs and transport-layer head-of-line blocking. |
+| **[Message Framing](https://blog.stephencleary.com/2009/04/message-framing.html)** | Stephen Cleary | The foundational article on delimiter vs length-prefix framing strategies. |
+
+#### Java Networking & I/O
+
+| Article | Author | Why It Matters |
+|---|---|---|
+| **[Virtual Threads Deep Dive](https://www.happycoders.eu/java/virtual-threads/)** | Sven Woltmann (HappyCoders) | How virtual threads mount/unmount on carrier threads, why pooling them is an anti-pattern, memory/performance considerations. |
+| **[Java 21 Virtual Threads -- Dude, Where's My Lock?](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d)** | Netflix Technology Blog | Production war story: Netflix hit a deadlock where all carrier threads were pinned inside `synchronized` blocks. Essential before using `synchronized` in your server. |
+| **[Beyond Loom: Weaving New Concurrency Patterns](https://developers.redhat.com/articles/2023/10/03/beyond-loom-weaving-new-concurrency-patterns)** | Red Hat Developer | Structured concurrency patterns for network servers beyond basic virtual thread usage. |
+| **[Efficient Java I/O: byte[], ByteBuffers, and OutputStreams](https://www.evanjones.ca/software/java-bytebuffers.html)** | Evan Jones | NIO write path benchmarks. Reveals that NIO heap buffers secretly allocate temporary direct buffers. Essential for HTTP response performance. |
+| **[Deep Dive into Java IO Models: BIO, NIO, AIO](https://gfish.online/en/blog/java-bio-nio-aio-io-models/)** | gfish.online | Systematic comparison with the restaurant analogy (BIO = one waiter per table; NIO = one waiter polling many tables). Covers epoll, kqueue, and why Netty prefers edge-triggered epoll. |
+| **[Asynchronous Non-blocking I/O Under the Hood](https://tuhuynh.com/en/posts/nio-under-the-hood/)** | Tu Huynh | The OS-level system calls Java NIO's Selector wraps: `select()`, `poll()`, `epoll()`, `kqueue()`. Why epoll is O(1) while select is O(n). |
+| **[Java Sequential I/O Performance](https://mechanical-sympathy.blogspot.com/2011/12/java-sequential-io-performance.html)** | Martin Thompson (Mechanical Sympathy) | Benchmarks of every Java I/O mechanism by the LMAX Disruptor creator. Understand overhead layers in Java I/O. |
+| **[JEP 444: Virtual Threads](https://openjdk.org/jeps/444)** | OpenJDK | The JDK Enhancement Proposal itself. Surprisingly readable -- motivation, design decisions, and alternatives considered. |
+| **[JEP 491: Synchronize Virtual Threads without Pinning](https://openjdk.org/jeps/491)** | OpenJDK | Fixes the Netflix deadlock problem. Short and worth reading in full. |
+
+### Open Source Code to Study
+
+Study these after building your own implementation to see how production code solves the same problems:
+
+| Project | Language | Why Study It |
+|---|---|---|
+| **[NanoHTTPD](https://github.com/NanoHttpd/nanohttpd)** | Java | Single-file HTTP server (~1500 lines). Request parsing, MIME types, cookies, SSL, chunked encoding. Read the whole thing in an afternoon. |
+| **[JLHTTP](https://github.com/curtcox/JLHTTP)** | Java | Single source file, ~50KB jar, zero dependencies. Small enough to read completely and understand every design decision. |
+| **[picohttpparser](https://github.com/h2o/picohttpparser)** | C | Tiny, zero-allocation HTTP parser used by the H2O web server. Demonstrates state-machine parsing with SIMD optimization. What production parsing looks like at the byte level. |
+| **[llhttp](https://llhttp.org/)** ([source](https://github.com/nodejs/llhttp)) | C (generated) | Node.js's HTTP parser, generated from a TypeScript state machine description. Shows how to formally specify a parser as a state machine graph. |
+| **[smoltcp](https://github.com/smoltcp-rs/smoltcp)** | Rust | Complete TCP/IP stack for embedded systems. No heap allocation. The TCP implementation (~2000 lines) is more approachable than the Linux kernel's. |
+| **[level-ip](https://github.com/saminiir/level-ip)** | C | Companion code to saminiir's "Let's Code a TCP/IP Stack" blog series. Linux userspace TCP/IP stack using TUN/TAP. |
+| **[Undertow](https://github.com/undertow-io/undertow)** | Java | JBoss's high-performance non-blocking HTTP server. Compositional handler chain architecture. Under 1MB, embeddable. |
+
+### Interactive & Hands-On Resources
+
+| Resource | What It Offers |
+|---|---|
+| **[Low-Level Academy](https://lowlvl.org/)** | Interactive, browser-based exercises for UDP and TCP. Write real protocol code that runs against test servers in your browser. Exceptional for building intuition. |
+| **[CodeCrafters: Build Your Own HTTP Server](https://app.codecrafters.io/courses/http-server/overview)** | Progressive challenge with automated tests at each stage: TCP setup, request parsing, response formatting, file serving, concurrency. Available in Java. |
+| **[Coding Challenges: Build Your Own Web Server](https://codingchallenges.fyi/challenges/challenge-webserver/)** | Structured weekly challenge by John Crickett. Part of a broader series (Redis, DNS, etc.). |
+| **[Protohackers](https://protohackers.com/)** ([tips](https://ellen.dev/protohackers-tips.html)) | Challenges 0-3 for protocol implementation practice with automated verification. |
+| **[Kurose/Ross Interactive Exercises](https://gaia.cs.umass.edu/kurose_ross/interactive/)** | Browser-based problems: subnetting, routing, TCP window management. Auto-graded, infinite variations. |
+| **[Kurose/Ross Wireshark Labs](https://gaia.cs.umass.edu/kurose_ross/wireshark.php)** | Structured labs for analyzing HTTP, TCP, DNS with real packet captures. Run these against your own server. |
+| **[Build Your Own X](https://github.com/codecrafters-io/build-your-own-x)** | Curated mega-list of "build from scratch" tutorials: web servers, TCP stacks, HTTP clients, across many languages. |
+
+### University Courses (Open Access)
+
+| Course | University | What It Offers |
+|---|---|---|
+| **CS144: Introduction to Computer Networking** | Stanford | Build a working TCP implementation across 6 labs. [cs144.github.io](https://cs144.github.io/) |
+| **6.829: Computer Networks** | MIT | Graduate-level: congestion control, routing, QoS. The reading list alone is a goldmine. [OCW](https://ocw.mit.edu/courses/6-829-computer-networks-fall-2002/) |
+| **6.033: Computer System Engineering** (Networking weeks) | MIT | Networking within a broader systems context: end-to-end arguments, layering, protocol design philosophy. [OCW](https://ocw.mit.edu/courses/6-033-computer-system-engineering-spring-2018/pages/week-5/) |
 
 ---
 
@@ -228,8 +319,11 @@ Run `./gradlew testStreams` to validate your implementation. All tests must pass
 - **LineReaderEdgeCaseTest**: Lone CR, null bytes, empty lines, trailing CR at EOF
 - **LineReaderFSMTest**: State machine transitions (READING_CHARS, SAW_CR) via crafted chunk boundaries
 
-### Pedagogical Note
-This mirrors the video's opening: before touching the network, master the stream. In Java, `Socket.getInputStream()` and `FileInputStream` share the same abstract contract. This is your "aha" moment for Layer 4 -> Layer 7.
+### Dig Deeper (Module 0)
+- Kurose & Ross, Chapter 2 (Application Layer) -- sockets as application-process interfaces
+- Java SE docs for `InputStream` contract -- what `read(byte[])` actually guarantees
+- [Efficient Java I/O: byte[], ByteBuffers, and OutputStreams](https://www.evanjones.ca/software/java-bytebuffers.html) (Evan Jones) -- performance characteristics of Java I/O paths
+- [Java Sequential I/O Performance](https://mechanical-sympathy.blogspot.com/2011/12/java-sequential-io-performance.html) (Martin Thompson) -- benchmarks of every Java I/O mechanism
 
 ---
 
@@ -275,6 +369,17 @@ Run `./gradlew testTcp` to validate your implementation.
 - **TcpEchoServerEnforcementTest**: SO_REUSEADDR, socket cleanup, fragmented input handling
 - **TcpEchoServerConcurrencyTest**: 10 concurrent clients, slow client isolation
 - **UdpEchoServerTest**: UDP echo, connectionless behavior (E1.3)
+
+### Dig Deeper (Module 1)
+- Stevens, *TCP/IP Illustrated Vol. 1*, Chapters 12-14 -- TCP connection management, data flow
+- Cerf & Kahn (1974) -- the paper that invented TCP
+- Clark (1988) -- the design philosophy behind TCP/IP
+- [Let's Code a TCP/IP Stack](https://www.saminiir.com/lets-code-tcp-ip-stack-1-ethernet-arp/) (saminiir) -- build TCP from Ethernet frames up
+- [Why You Should Understand (a Little) About TCP](https://jvns.ca/blog/2015/11/21/why-you-should-understand-a-little-about-tcp/) (Julia Evans)
+- [The Internet is Cool. Thank you, TCP](https://cefboud.com/posts/tcp-deep-dive-internals/) (Moncef Abboud) -- modern TCP internals illustrated
+- [TCP Flow Control](https://www.brianstorti.com/tcp-flow-control/) (Brian Storti) -- the sliding window explained visually
+- Beej's Guide, Chapters 2-5 -- the C sockets API that Java wraps
+- [Low-Level Academy](https://lowlvl.org/) -- interactive TCP exercises in the browser
 
 ### Milestone Checkpoint
 > **M1**: You can explain to a junior engineer why `Socket.getInputStream()` and `FileInputStream` are interchangeable from the parser's perspective, but differ in who controls the timing. You can identify TCP states in `netstat` output.
@@ -331,6 +436,17 @@ Run `./gradlew testTcp` to validate your implementation.
 3. **E2.3**: Read RFC 9112 Section 3 (Request Line). Write a one-page summary in your own words.
 4. **E2.4** (new): Send `GET /hello%20world HTTP/1.1` via `nc`. Then send `GET /hello world HTTP/1.1`. What should the server do with each? What does the RFC say about spaces in URIs?
 5. **E2.5** (new): Read Fielding's REST dissertation, Chapter 5. In 200 words, explain how the constraints of REST map to what you've seen in HTTP so far.
+
+### Dig Deeper (Module 2)
+- RFC 9112, Sections 2-3 (Message, Request Line) at [httpwg.org](https://httpwg.org/specs/rfc9112.html)
+- RFC 9110, Sections 8-9 (Representations, Methods) at [httpwg.org](https://httpwg.org/specs/rfc9110.html)
+- [How to Read an RFC](https://www.mnot.net/blog/2018/07/31/read_rfc) (Mark Nottingham) -- by the former HTTP WG chair
+- [HTTP/1.0 From Scratch](https://kmcd.dev/posts/http1.0-from-scratch/) (Kevin McDonald) -- warm-up before HTTP/1.1
+- [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/) (James Marshall) -- 15-page practical wire format guide
+- [HTTP/1.1 Explained](https://http.dev/1.1) -- accessible companion to the RFC
+- Fielding's REST dissertation, Chapter 5 -- design rationale behind HTTP semantics
+- Berners-Lee, "Information Management: A Proposal" (1989) -- how it all started
+- [HTTP Keep-Alive, Pipelining, Multiplexing & Connection Pooling](https://www.haproxy.com/blog/http-keep-alive-pipelining-multiplexing-and-connection-pooling) (HAProxy) -- persistent connections explained by practitioners
 
 ### Milestone Checkpoint
 > **M2**: You can draw an HTTP request on paper, labeling every CRLF, and explain why the empty line is the most important byte sequence in HTTP/1.1. You can explain the difference between safe and idempotent methods with examples.
@@ -406,6 +522,15 @@ Run `./gradlew testHttp` to validate your implementation.
 - **RequestParserEnforcementTest**: No single-byte read(), handles TCP fragmentation
 - **RequestParserFuzzTest**: 1000 random inputs, truncation, null bytes -- never crashes
 
+### Dig Deeper (Module 3)
+- Harold, *Java Network Programming*, Chapters 9-10 (ServerSocket, Socket)
+- [HTTP Desync Attacks: Request Smuggling Reborn](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn) (James Kettle) -- every edge case where HTTP parsers disagree; the adversarial spec your parser must survive
+- [picohttpparser source](https://github.com/h2o/picohttpparser) -- production C parser with state machine and SIMD; study the byte-level parsing approach
+- [llhttp source](https://github.com/nodejs/llhttp) -- Node.js HTTP parser generated from a formal state machine description
+- [NanoHTTPD source](https://github.com/NanoHttpd/nanohttpd) -- single-file Java HTTP server (~1500 lines); compare your parser to theirs
+- [Message Framing](https://blog.stephencleary.com/2009/04/message-framing.html) (Stephen Cleary) -- delimiter vs length-prefix strategies
+- [Connection Management in HTTP/1.x](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x) (MDN) -- persistent connections with diagrams
+
 ### Milestone Checkpoint
 > **M3**: Your parser passes explicit JUnit tests for: (a) simple GET, (b) POST with headers, (c) malformed request line rejection, (d) duplicate headers preserved as a list.
 
@@ -463,6 +588,18 @@ Run `./gradlew testServer` to validate your implementation.
 - **HttpServerGracefulShutdownTest**: Clean shutdown behavior
 - **HttpServerEnforcementTest**: Virtual threads, socket cleanup, fragmented requests
 
+### Dig Deeper (Module 4)
+- Goetz, *Java Concurrency in Practice*, Chapters 6-8 (Task Execution, Cancellation, Thread Pools)
+- [The C10K Problem](https://www.kegel.com/c10k.html) (Dan Kegel) -- the original essay
+- [JEP 444: Virtual Threads](https://openjdk.org/jeps/444) -- the specification itself, surprisingly readable
+- [Virtual Threads Deep Dive](https://www.happycoders.eu/java/virtual-threads/) (HappyCoders) -- mounting/unmounting, carrier threads, why pooling is an anti-pattern
+- [Java 21 Virtual Threads -- Dude, Where's My Lock?](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d) (Netflix) -- production deadlock from pinned carrier threads
+- [JEP 491: Synchronize Virtual Threads without Pinning](https://openjdk.org/jeps/491) -- fixes the Netflix problem
+- [Beyond Loom: Weaving New Concurrency Patterns](https://developers.redhat.com/articles/2023/10/03/beyond-loom-weaving-new-concurrency-patterns) (Red Hat) -- structured concurrency for servers
+- [Concurrent Servers](https://eli.thegreenplace.net/2017/concurrent-servers-part-1-introduction/) (Eli Bendersky, 6-part series) -- from sequential to event-driven servers with state machine parsers
+- [Deep Dive into Java IO Models: BIO, NIO, AIO](https://gfish.online/en/blog/java-bio-nio-aio-io-models/) -- BIO vs NIO vs AIO with the restaurant analogy
+- [Asynchronous Non-blocking I/O Under the Hood](https://tuhuynh.com/en/posts/nio-under-the-hood/) (Tu Huynh) -- poll, select, epoll, kqueue beneath Java NIO
+
 ### Milestone Checkpoint
 > **M4**: Your server serves a simple HTML page to a real browser (Chrome/Firefox) using `ServerSocket` and virtual threads. It handles 100+ concurrent connections without crashing.
 
@@ -504,6 +641,17 @@ Run `./gradlew testResponse` to validate your implementation.
 - **ChunkedEncoderEdgeCaseTest**: Single byte, CRLF in data, empty chunk
 - **StaticFileServerSecurityTest**: Directory traversal prevention (6 attack vectors)
 - **ContentNegotiationTest**: Accept header parsing, quality factors, 406 responses
+
+### Dig Deeper (Module 5)
+- RFC 9110, Sections 8, 12, 15 (Representations, Content Negotiation, Status Codes)
+- RFC 9112, Section 7.1 (Chunked Transfer Coding)
+- Grigorik, *High Performance Browser Networking*, Chapters 1-2 (latency, TCP optimization) -- free at [hpbn.co](https://hpbn.co/)
+- [It's Always TCP_NODELAY](https://brooker.co.za/blog/2024/05/09/nagle.html) (Marc Brooker, AWS) -- why Nagle's algorithm hurts your server
+- [Why You Should Understand (a Little) About TCP](https://jvns.ca/blog/2015/11/21/why-you-should-understand-a-little-about-tcp/) (Julia Evans) -- the delayed ACK + Nagle 40ms latency trap
+- [Optimizing TCP for High WAN Throughput](https://blog.cloudflare.com/optimizing-tcp-for-high-throughput-and-low-latency/) (Cloudflare) -- kernel-level tuning for large file transfers
+- [Efficient Java I/O: byte[], ByteBuffers, and OutputStreams](https://www.evanjones.ca/software/java-bytebuffers.html) (Evan Jones) -- NIO write path secrets
+- [HTTP Desync Attacks](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn) (James Kettle) -- why strict Content-Length and chunked parsing matters for security
+- [HTTP persistent connections, pipelining and chunked encoding](https://sharovatov.github.io/posts/2009-11-http-pipeline.html) (Vitaly Sharovatov) -- why chunked encoding exists
 
 ### Milestone Checkpoint
 > **M5**: A browser can play an MP4 video served by your Java server over a raw TCP socket with no framework. Your server correctly handles `Content-Type` and `Content-Length`.
@@ -568,6 +716,15 @@ Run `./gradlew test` to validate ALL modules, including capstone-specific tests:
 ### Reflection Essay
 Write 500 words on: *"Every time I call `restTemplate.getForObject()` at work, these are the layers I am implicitly trusting. Now that I have built them, which abstractions do I respect more, and which do I distrust?"*
 
+### Dig Deeper (Module 7)
+- Clark, "The Design Philosophy of the DARPA Internet Protocols" (1988) -- the priority ordering of goals
+- Saltzer, Reed & Clark, "End-to-End Arguments in System Design" (1984) -- the most influential network design principle
+- Fielding's REST dissertation, Chapter 5 -- HTTP's architectural constraints and why they exist
+- Peterson & Davie, *Computer Networks: A Systems Approach*, Chapter 1 -- free at [book.systemsapproach.org](https://book.systemsapproach.org/)
+- [Why Do We Use the Linux Kernel's TCP Stack?](https://jvns.ca/blog/2016/06/30/why-do-we-use-the-linux-kernels-tcp-stack/) (Julia Evans) -- what sits beneath your Java Socket
+- [The Road to QUIC](https://blog.cloudflare.com/the-road-to-quic/) (Cloudflare) -- why HTTP/3 abandons TCP entirely
+- [HTTP/3 Explained](https://http3-explained.haxx.se/en) (Daniel Stenberg) -- QUIC and the future of HTTP transport
+
 ### Milestone Checkpoint
 > **M7**: You have written the reflection and can whiteboard the full path of an HTTP POST from browser -> your Java server -> response, labeling OSI layers and Java classes at each step.
 
@@ -599,22 +756,25 @@ As you progress, maintain these files in your repo:
 
 ## Suggested Reading Order
 
-For optimal learning alongside this course:
+For optimal learning alongside this course (see each module's **Dig Deeper** section for the full list):
 
-1. **Before Module 0**: Skim Kurose & Ross, Chapter 2 (Application Layer) or watch companion videos
-2. **Module 1**: Stevens, *TCP/IP Illustrated Vol. 1*, Chapters 12-14 (TCP) OR Kurose & Ross, Chapter 3 (Transport Layer)
-3. **Module 2**: RFC 9112 Sections 2-3 (Message, Request Line) at httpwg.org. Berners-Lee (1989).
-4. **Module 3**: Harold, *Java Network Programming*, Chapters 9-10 (Sockets)
-5. **Module 4**: Goetz, *Java Concurrency in Practice*, Chapters 6-8. JEP 444.
-6. **Module 5**: Grigorik, *High Performance Browser Networking*, Chapters 1-2 (free at hpbn.co)
-7. **Module 7**: Clark (1988) + Saltzer (1984) papers. Fielding dissertation Chapter 5.
+1. **Before Module 0**: Kurose & Ross, Chapter 2 (Application Layer). [How to Read an RFC](https://www.mnot.net/blog/2018/07/31/read_rfc) (Nottingham).
+2. **Module 0**: Java SE `InputStream` contract docs. [Efficient Java I/O](https://www.evanjones.ca/software/java-bytebuffers.html) (Evan Jones).
+3. **Module 1**: Stevens, *TCP/IP Illustrated Vol. 1*, Ch. 12-14. [Why You Should Understand TCP](https://jvns.ca/blog/2015/11/21/why-you-should-understand-a-little-about-tcp/) (Julia Evans). Beej's Guide Ch. 2-5.
+4. **Module 2**: RFC 9112 Sections 2-3 at httpwg.org. [HTTP Made Really Easy](https://www.jmarshall.com/easy/http/). Berners-Lee (1989).
+5. **Module 3**: Harold, *Java Network Programming*, Ch. 9-10. [HTTP Desync Attacks](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn) (Kettle). Study [NanoHTTPD source](https://github.com/NanoHttpd/nanohttpd).
+6. **Module 4**: Goetz, *Java Concurrency in Practice*, Ch. 6-8. [JEP 444](https://openjdk.org/jeps/444). [Netflix virtual threads war story](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d). [Concurrent Servers series](https://eli.thegreenplace.net/2017/concurrent-servers-part-1-introduction/) (Bendersky).
+7. **Module 5**: Grigorik, *HPBN*, Ch. 1-2 (free at hpbn.co). [TCP_NODELAY](https://brooker.co.za/blog/2024/05/09/nagle.html) (Brooker).
+8. **Module 7**: Clark (1988) + Saltzer (1984) papers. Fielding dissertation Ch. 5.
 
 ---
 
 ## Resources Quick Reference
-- **RFC 9110**: [httpwg.org/specs/rfc9110.html](https://httpwg.org/specs/rfc9110.html)
-- **RFC 9112**: [httpwg.org/specs/rfc9112.html](https://httpwg.org/specs/rfc9112.html)
-- **Java 21 Virtual Threads**: [JEP 444](https://openjdk.org/jeps/444)
-- **Free Books**: [hpbn.co](https://hpbn.co/), [beej.us/guide/bgnet](https://beej.us/guide/bgnet/), [book.systemsapproach.org](https://book.systemsapproach.org/)
+- **RFCs**: [RFC 9110](https://httpwg.org/specs/rfc9110.html) (Semantics), [RFC 9112](https://httpwg.org/specs/rfc9112.html) (HTTP/1.1), [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293) (TCP)
+- **How to Read RFCs**: [mnot.net/blog](https://www.mnot.net/blog/2018/07/31/read_rfc) (Mark Nottingham, former HTTP WG chair)
+- **Free Books**: [hpbn.co](https://hpbn.co/), [beej.us/guide/bgnet](https://beej.us/guide/bgnet/), [book.systemsapproach.org](https://book.systemsapproach.org/), [http3-explained.haxx.se](https://http3-explained.haxx.se/en)
+- **Free Zines**: [Networking! ACK!](https://jvns.ca/networking-zine.pdf) (Julia Evans)
+- **Java Virtual Threads**: [JEP 444](https://openjdk.org/jeps/444), [JEP 491](https://openjdk.org/jeps/491), [HappyCoders deep dive](https://www.happycoders.eu/java/virtual-threads/)
+- **Source Code to Study**: [NanoHTTPD](https://github.com/NanoHttpd/nanohttpd), [picohttpparser](https://github.com/h2o/picohttpparser), [llhttp](https://github.com/nodejs/llhttp), [smoltcp](https://github.com/smoltcp-rs/smoltcp)
+- **Interactive**: [Low-Level Academy](https://lowlvl.org/), [Protohackers](https://protohackers.com/), [CodeCrafters](https://app.codecrafters.io/courses/http-server/overview), [Coding Challenges](https://codingchallenges.fyi/challenges/challenge-webserver/)
 - **Tools**: `curl`, `ncat`, Wireshark, `tcpdump`, `wrk`, `oha`, `hexdump -C`, `async-profiler`
-- **Practice**: [protohackers.com](https://protohackers.com/), [CodeCrafters HTTP Server](https://app.codecrafters.io/courses/http-server/overview)
