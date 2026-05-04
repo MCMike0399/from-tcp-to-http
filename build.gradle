@@ -26,5 +26,42 @@ tasks.named('test') {
     testLogging {
         events 'passed', 'skipped', 'failed'
         showStandardStreams = true
+        exceptionFormat 'full'
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+    }
+}
+
+// Module-specific test tasks
+// Usage: ./gradlew testStreams (Module 0), ./gradlew testTcp (Module 1), etc.
+['streams', 'tcp', 'http', 'server', 'response', 'integration'].each { module ->
+    tasks.register("test${module.capitalize()}", Test) {
+        description = "Run tests for the ${module} module"
+        group = 'verification'
+        useJUnitPlatform()
+        filter {
+            includeTestsMatching "${module}.*"
+        }
+        testLogging {
+            events 'passed', 'skipped', 'failed'
+            showStandardStreams = true
+            exceptionFormat 'full'
+        }
+    }
+}
+
+// Run all enforcement tests across modules: ./gradlew testEnforcement
+tasks.register("testEnforcement", Test) {
+    description = "Run all enforcement tests across all modules"
+    group = 'verification'
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching "*Enforcement*"
+    }
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+        exceptionFormat 'full'
     }
 }

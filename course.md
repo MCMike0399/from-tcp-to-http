@@ -221,6 +221,13 @@ HTTP is a byte-level protocol. Do not casually use `Scanner` or `BufferedReader`
 2. **E0.2**: Test your `LineReader` against a text file. Then test it against `System.in` (type lines in terminal). Observe: the interface is identical whether the bytes come from disk or a human.
 3. **E0.3** (new): Draw the state machine for your `LineReader`: states `READING_CHARS`, `SAW_CR`, `SAW_CRLF`. Label transitions with the byte values that trigger them. This is your first protocol parser.
 
+### Test Validation
+Run `./gradlew testStreams` to validate your implementation. All tests must pass before proceeding to Module 1.
+- **LineReaderCorrectnessTest**: Basic delimiter detection (LF, CRLF, mixed), empty streams, EOF handling
+- **LineReaderEnforcementTest**: Verifies chunk-based reading (not byte-by-byte), no BufferedReader/Scanner, no O(n^2) string concatenation
+- **LineReaderEdgeCaseTest**: Lone CR, null bytes, empty lines, trailing CR at EOF
+- **LineReaderFSMTest**: State machine transitions (READING_CHARS, SAW_CR) via crafted chunk boundaries
+
 ### Pedagogical Note
 This mirrors the video's opening: before touching the network, master the stream. In Java, `Socket.getInputStream()` and `FileInputStream` share the same abstract contract. This is your "aha" moment for Layer 4 -> Layer 7.
 
@@ -261,6 +268,13 @@ This mirrors the video's opening: before touching the network, master the stream
 3. **E1.3**: Build a UDP echo server using `DatagramSocket`. Send packets with `nc -u`. Notice: no connection, no refusal, packets may vanish silently.
 4. **E1.4** (new): Run your echo server and connect with `nc`. While connected, run `netstat -an | grep 42069` in another terminal. Identify which sockets are in `LISTEN` vs `ESTABLISHED` state. Close the client and observe `TIME_WAIT`. Enable `SO_REUSEADDR` on your `ServerSocket` and understand why.
 5. **E1.5** (new): Use `tcpdump -i lo0 port 42069` (or Wireshark) to capture the three-way handshake. Identify SYN, SYN-ACK, ACK packets. Observe sequence numbers incrementing.
+
+### Test Validation
+Run `./gradlew testTcp` to validate your implementation.
+- **TcpEchoServerCorrectnessTest**: Echo behavior, multi-line, long lines, client disconnect handling
+- **TcpEchoServerEnforcementTest**: SO_REUSEADDR, socket cleanup, fragmented input handling
+- **TcpEchoServerConcurrencyTest**: 10 concurrent clients, slow client isolation
+- **UdpEchoServerTest**: UDP echo, connectionless behavior (E1.3)
 
 ### Milestone Checkpoint
 > **M1**: You can explain to a junior engineer why `Socket.getInputStream()` and `FileInputStream` are interchangeable from the parser's perspective, but differ in who controls the timing. You can identify TCP states in `netstat` output.
@@ -382,6 +396,16 @@ public class HttpRequest {
 4. **E3.4** (new): Write tests for header parsing edge cases: duplicate header names, empty header values, very long header lines (what's the limit?), and the `Host` header (required in HTTP/1.1).
 5. **E3.5** (new): Write a fuzz test: generate random byte sequences and feed them to your parser. It must never crash with an unhandled exception -- only throw `ProtocolException` for invalid input.
 
+### Test Validation
+Run `./gradlew testHttp` to validate your implementation.
+- **HttpRequestTest**: Immutability, defensive copies, null rejection
+- **RequestLineParserCorrectnessTest**: Method/URI/version extraction, headers, duplicate headers, Content-Length body
+- **RequestLineParserMalformedTest**: ProtocolException for 12 categories of invalid input
+- **HeaderParserEdgeCaseTest**: Colons in values, empty values, Host header requirement
+- **BodyParserTest**: Exact Content-Length body reading, chunked delivery handling
+- **RequestParserEnforcementTest**: No single-byte read(), handles TCP fragmentation
+- **RequestParserFuzzTest**: 1000 random inputs, truncation, null bytes -- never crashes
+
 ### Milestone Checkpoint
 > **M3**: Your parser passes explicit JUnit tests for: (a) simple GET, (b) POST with headers, (c) malformed request line rejection, (d) duplicate headers preserved as a list.
 
@@ -430,6 +454,15 @@ public interface HttpHandler {
 4. **E4.4** (new): Open 100 concurrent connections using a script or `wrk`. Monitor with `jcmd <pid> Thread.dump_to_file threads.txt` and observe the virtual threads. Compare memory usage vs the same test with platform threads.
 5. **E4.5** (new): Implement a graceful shutdown: when the server receives SIGINT, it stops accepting new connections, finishes in-flight requests, then exits. Use `Runtime.addShutdownHook()`.
 
+### Test Validation
+Run `./gradlew testServer` to validate your implementation.
+- **HttpServerBasicTest**: Accepts connections, routes requests, returns 200/404/400
+- **RouterTest**: Exact match, method-aware dispatch, multiple routes
+- **HttpServerConcurrencyTest**: 100 concurrent connections, slow handler isolation
+- **HttpServerKeepAliveTest**: Persistent connections, Connection: close support
+- **HttpServerGracefulShutdownTest**: Clean shutdown behavior
+- **HttpServerEnforcementTest**: Virtual threads, socket cleanup, fragmented requests
+
 ### Milestone Checkpoint
 > **M4**: Your server serves a simple HTML page to a real browser (Chrome/Firefox) using `ServerSocket` and virtual threads. It handles 100+ concurrent connections without crashing.
 
@@ -464,6 +497,14 @@ public interface HttpHandler {
 4. **E5.4** (new): Implement basic content negotiation: if the client sends `Accept: application/json`, respond with JSON. If `Accept: text/html`, respond with HTML. Test with `curl -H "Accept: application/json"`.
 5. **E5.5** (new): Enable and disable `TCP_NODELAY` on your server socket. Measure response latency for small responses using `curl -w "%{time_total}"`. Observe the difference.
 
+### Test Validation
+Run `./gradlew testResponse` to validate your implementation.
+- **HttpResponseBuilderTest**: Status line format, headers, Content-Length accuracy, binary body
+- **ChunkedEncoderCorrectnessTest**: Chunked format per RFC 9112 Section 7.1
+- **ChunkedEncoderEdgeCaseTest**: Single byte, CRLF in data, empty chunk
+- **StaticFileServerSecurityTest**: Directory traversal prevention (6 attack vectors)
+- **ContentNegotiationTest**: Accept header parsing, quality factors, 406 responses
+
 ### Milestone Checkpoint
 > **M5**: A browser can play an MP4 video served by your Java server over a raw TCP socket with no framework. Your server correctly handles `Content-Type` and `Content-Length`.
 
@@ -497,6 +538,12 @@ Build a server that:
 3. Handles at least 100 concurrent connections without crashing.
 4. Logs every request line to stdout.
 5. Returns `400 Bad Request` for any malformed input without crashing.
+
+### Test Validation
+Run `./gradlew test` to validate ALL modules, including capstone-specific tests:
+- **RfcComplianceTest**: Status line format, Content-Length accuracy, blank line, missing Host -> 400, unknown method, URI/header size limits
+- **BrowserCompatibilityTest**: Java HttpClient GET/POST/keep-alive (real HTTP client)
+- **LoadValidationTest**: 100 concurrent clients, 500 sequential connections with no socket leaks
 
 ### Milestone Checkpoint
 > **M6**: Your server is demonstrably compliant, concurrent, and capable of serving rich media.

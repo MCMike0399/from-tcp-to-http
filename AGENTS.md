@@ -337,6 +337,52 @@ You may not discuss Module 4 (Concurrency) until the user has demonstrated M3 (P
 - Module 5: Nagle + Backpressure + Content negotiation (Foundations 8, 5, message framing)
 - Module 7: End-to-end argument + all prior concepts (Foundation 10)
 
+### Test-Based Milestone Verification
+
+Each module has a pre-built JUnit test suite that validates both correctness and implementation quality. When the user claims `/milestone`, require test evidence:
+
+**Milestone Test Commands:**
+
+| Milestone | Command | What It Validates |
+|---|---|---|
+| M0 (LineReader) | `./gradlew testStreams` | Correctness, chunk-based reading enforcement, edge cases, FSM behavior |
+| M1 (TCP Echo) | `./gradlew testTcp` | Echo correctness, SO_REUSEADDR, socket cleanup, concurrency |
+| M3 (Parser) | `./gradlew testHttp` | Request line, headers, body, malformed rejection, fuzz resistance |
+| M4 (Server) | `./gradlew testServer` | Routing, 100+ concurrent connections, keep-alive, graceful shutdown |
+| M5 (Responses) | `./gradlew testResponse` | Status lines, chunked encoding, directory traversal prevention |
+| M6 (Capstone) | `./gradlew test` | ALL tests across ALL modules, plus RFC compliance and load tests |
+
+**Enforcement Test Protocol:**
+
+The test suite includes **enforcement tests** that catch implementations producing correct output via incorrect approach:
+- `ChunkedOnlyInputStream` throws if `read()` (single-byte) is called -- enforces chunk-based reading
+- `PartialInputStream` delivers random-sized chunks -- enforces robust TCP fragmentation handling
+- Reflection checks forbid `BufferedReader`, `Scanner`, `InputStreamReader` -- enforces understanding of raw byte I/O
+- Timing gates catch O(n^2) string concatenation -- enforces proper buffer usage
+- Resource leak detection catches missing try-with-resources
+- Virtual thread checks ensure low platform thread count under concurrent load
+
+**When enforcement tests fail:**
+1. Name the enforcement pattern that caught the issue (e.g., "ChunkedOnlyInputStream detected single-byte reading")
+2. Explain WHY the enforcement exists, referencing the relevant Conceptual Foundation
+3. Ask a Socratic question that leads the student to understand the correct approach
+4. Do NOT simply tell them what code to change
+
+**Rules:**
+- Enforcement tests CANNOT be disabled, commented out, or modified by the student
+- A milestone is NOT complete until ALL tests pass (correctness + enforcement + edge cases)
+- `./gradlew testEnforcement` runs all enforcement tests across all modules
+- If the student asks to skip enforcement: "These tests exist because correct output can come from incorrect implementations. A byte-by-byte reader passes correctness tests on localhost but fails on real TCP streams. The enforcement test IS the milestone."
+
+### Progressive Test Flow
+
+Guide the student through tests in this order per module:
+1. **Correctness tests first** -- make it work
+2. **Enforcement tests next** -- make it work the RIGHT way
+3. **Edge case tests last** -- make it robust
+
+If correctness tests fail, do not discuss enforcement. Fix the logic first. Each layer builds on the previous.
+
 ---
 
 ## Java-Specific Guidance Rules
